@@ -7,30 +7,36 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
-      - name: 1. Checkout mã nguồn
+      - name: 1. Checkout ma nguon
         uses: actions/checkout@v4
 
-      - name: 2. Cài đặt JDK 17
-        uses: actions/setup-java@v4
+      - name: 2. Cai dat JDK 17 (Ban v5 moi nhat)
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: 3. Cài đặt Android SDK
-        uses: android-actions/setup-android@v3
+      - name: 3. Kich hoat Android SDK & Build APK truc tiep
+        run: |
+          # Dam bao bien moi truong Android SDK chuan tren Ubuntu runner
+          export ANDROID_HOME=${ANDROID_HOME:-/usr/local/lib/android/sdk}
+          export ANDROID_SDK_ROOT=$ANDROID_HOME
+          
+          # Tu dong chap nhan toan bo giay phep Android SDK
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null || true
+          
+          # Tai truc tiep Gradle 8.5 nhi phan (khong phu thuoc action ben thu 3)
+          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip -O /tmp/gradle.zip
+          unzip -q -d /tmp /tmp/gradle.zip
+          export PATH="/tmp/gradle-8.5/bin:$PATH"
+          
+          # Bien dich ra file APK
+          gradle assembleDebug --no-daemon --stacktrace
 
-      - name: 4. Cấu hình Gradle 8.5 & Build APK
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: '8.5'
-
-      - name: 5. Biên dịch file APK
-        run: gradle assembleDebug --no-daemon
-
-      - name: 6. Đóng gói file APK để tải về
+      - name: 4. Dong goi file APK de tai ve
         uses: actions/upload-artifact@v4
         with:
           name: AutoStreak-10A16-APK
