@@ -46,16 +46,14 @@ import java.util.Set;
 
 public class MainActivity extends Activity {
 
-    public static final String PREFS_NAME    = "AutoStreakPrefs";
-    public static final String KEY_TARGETS   = "all_targets";
-    public static final String KEY_SELECTED  = "selected_targets";
-    public static final String KEY_MSG       = "streak_message";
-    public static final String KEY_HOUR      = "schedule_hour";
-    public static final String KEY_MINUTE    = "schedule_minute";
+    public static final String PREFS_NAME = "AutoStreakPrefs";
+    public static final String KEY_TARGETS = "all_targets";
+    public static final String KEY_SELECTED = "selected_targets";
+    public static final String KEY_MSG = "streak_message";
+    public static final String KEY_HOUR = "schedule_hour";
+    public static final String KEY_MINUTE = "schedule_minute";
 
-    private static final String DESKTOP_UA =
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
-            "(KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
+    private static final String DESKTOP_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
 
     private WebView webView;
     private LinearLayout checkboxContainer;
@@ -106,15 +104,13 @@ public class MainActivity extends Activity {
 
         // KHU VỰC 2: WEBVIEW ĐĂNG NHẬP TIKTOK
         mainLayout.addView(createSectionHeader("2. Tài khoản TikTok (Gmail / FB / SĐT / QR)"));
-
         LinearLayout webBtnRow = new LinearLayout(this);
         webBtnRow.setOrientation(LinearLayout.HORIZONTAL);
 
         Button btnToggleWeb = createStyledButton("🌐 Mở/Ẩn Khung Đăng Nhập", "#333333", "#FFFFFF");
-        Button btnOpenMsg   = createStyledButton("📩 Vào Hộp Thư TikTok",       "#FE2C55", "#FFFFFF");
+        Button btnOpenMsg = createStyledButton("📩 Vào Hộp Thư TikTok", "#FE2C55", "#FFFFFF");
 
-        LinearLayout.LayoutParams halfParam = new LinearLayout.LayoutParams(
-                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        LinearLayout.LayoutParams halfParam = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
         halfParam.setMargins(4, 4, 4, 4);
         btnToggleWeb.setLayoutParams(halfParam);
         btnOpenMsg.setLayoutParams(halfParam);
@@ -124,9 +120,9 @@ public class MainActivity extends Activity {
         mainLayout.addView(webBtnRow);
 
         setupWebView();
-
+        // Cải tiến: Phóng to WebView lên 1600 pixel và bật cuộn mượt mà
         LinearLayout.LayoutParams webParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, 950);
+                ViewGroup.LayoutParams.MATCH_PARENT, 1600);
         webParams.setMargins(0, 12, 0, 12);
         webView.setLayoutParams(webParams);
         webView.setVisibility(View.GONE);
@@ -148,13 +144,13 @@ public class MainActivity extends Activity {
             appendLog("Đang tải danh sách Hộp thư TikTok...");
         });
 
-        // KHU VỰC 3: DANH SÁCH TÍCH CHỌN
+        // KHU VỰC 3: DANH SÁCH TÍCH CHỌN NGƯỜI NHẬN CHUỖI
         mainLayout.addView(createSectionHeader("3. Danh sách giữ chuỗi (Tích chọn)"));
 
         LinearLayout targetBtnRow = new LinearLayout(this);
         targetBtnRow.setOrientation(LinearLayout.HORIZONTAL);
-        Button btnScan       = createStyledButton("🔍 Quét từ Hộp thư",        "#2A2A2A", "#25F4EE");
-        Button btnAddManual  = createStyledButton("➕ Thêm tên thủ công",       "#2A2A2A", "#FFFFFF");
+        Button btnScan = createStyledButton("🔍 Quét từ Hộp thư", "#2A2A2A", "#25F4EE");
+        Button btnAddManual = createStyledButton("➕ Thêm tên thủ công", "#2A2A2A", "#FFFFFF");
         btnScan.setLayoutParams(halfParam);
         btnAddManual.setLayoutParams(halfParam);
         targetBtnRow.addView(btnScan);
@@ -169,9 +165,10 @@ public class MainActivity extends Activity {
         checkboxContainer.setBackgroundColor(Color.parseColor("#1E1E1E"));
         checkboxContainer.setPadding(20, 20, 20, 20);
         mainLayout.addView(checkboxContainer);
+
         refreshTargetCheckboxes();
 
-        // KHU VỰC 4: CẤU HÌNH NỘI DUNG & GIỜ GỬI
+        // KHU VỰC 4: CẤU HÌNH NỘI DUNG & GIỜ GỬI ĐỊNH KỲ
         mainLayout.addView(createSectionHeader("4. Cấu hình tự động gửi (1 lần/ngày)"));
 
         msgInput = new EditText(this);
@@ -214,31 +211,27 @@ public class MainActivity extends Activity {
 
         mainLayout.addView(timeRow);
 
-        Button btnSaveStart = createStyledButton(
-                "🚀 Lưu cấu hình & Bật Tự Động Chạy Ngầm", "#FE2C55", "#FFFFFF");
+        Button btnSaveStart = createStyledButton("🚀 Lưu cấu hình & Bật Tự Động Chạy Ngầm", "#FE2C55", "#FFFFFF");
         btnSaveStart.setOnClickListener(v -> saveAndActivateService());
         mainLayout.addView(btnSaveStart);
 
-        Button btnRunNow = createStyledButton(
-                "⚡ Chạy gửi Chuỗi ngay lập tức (Test)", "#1F883D", "#FFFFFF");
+        Button btnRunNow = createStyledButton("⚡ Chạy gửi Chuỗi ngay lập tức (Test)", "#1F883D", "#FFFFFF");
         btnRunNow.setOnClickListener(v -> executeDailyStreakBatch(false));
         mainLayout.addView(btnRunNow);
 
-        Button btnResetToday = createStyledButton(
-                "🔄 Reset trạng thái ngày hôm nay (Để gửi lại)", "#444444", "#FFFFFF");
+        Button btnResetToday = createStyledButton("🔄 Reset trạng thái ngày hôm nay (Để gửi lại)", "#444444", "#FFFFFF");
         btnResetToday.setOnClickListener(v -> resetTodayLogs());
         mainLayout.addView(btnResetToday);
 
-        // KHU VỰC 5: NHẬT KÝ
+        // KHU VỰC 5: NHẬT KÝ HOẠT ĐỘNG (CONSOLE LOG)
         mainLayout.addView(createSectionHeader("5. Nhật ký thực thi (System Log)"));
-
         logConsole = new TextView(this);
         logConsole.setBackgroundColor(Color.parseColor("#0A0A0A"));
         logConsole.setTextColor(Color.parseColor("#00FF66"));
         logConsole.setTypeface(Typeface.MONOSPACE);
         logConsole.setTextSize(11);
         logConsole.setPadding(20, 20, 20, 20);
-        logConsole.setText("[SYSTEM] Khởi tạo Auto-Streak 10A16 hoàn tất.\n");
+        logConsole.setText("[SYSTEM] Khởi tạo Auto-Streak 10A16 (Fixed WebView Scroll) hoàn tất.\n");
         mainLayout.addView(logConsole);
 
         setContentView(rootScroll);
@@ -255,6 +248,11 @@ public class MainActivity extends Activity {
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
+        settings.setLoadWithOverviewMode(true);
+        settings.setUseWideViewPort(true);
+        settings.setSupportZoom(true);
+        settings.setBuiltInZoomControls(true);
+        settings.setDisplayZoomControls(false);
         settings.setUserAgentString(DESKTOP_UA);
 
         CookieManager cookieManager = CookieManager.getInstance();
@@ -269,14 +267,12 @@ public class MainActivity extends Activity {
                 appendLog("Đã tải trang: " + url);
             }
         });
-
         webView.addJavascriptInterface(new WebAppInterface(), "AndroidBridge");
     }
 
     private void requestSpecialPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
             }
         }
@@ -293,16 +289,15 @@ public class MainActivity extends Activity {
 
     private void scanStreakContactsFromWebView() {
         appendLog("Đang quét các cuộc trò chuyện trong hộp thư...");
-        String jsScan =
-                "(function() {" +
+        String jsScan = "(function() {" +
                 "var names = [];" +
                 "var items = document.querySelectorAll('[data-e2e=\"chat-list-item\"], p, span');" +
                 "for (var i = 0; i < items.length; i++) {" +
-                "  var txt = (items[i].innerText || '').trim();" +
-                "  if (txt.length > 2 && txt.length < 35 && txt.indexOf('\\n') === -1 && " +
-                "      !txt.match(/^(Tin nhắn|Messages|Tất cả|chuỗi|Hôm nay|Yesterday)$/i)) {" +
-                "    if (names.indexOf(txt) === -1 && names.length < 25) names.push(txt);" +
-                "  }" +
+                "   var txt = (items[i].innerText || '').trim();" +
+                "   if (txt.length > 2 && txt.length < 35 && txt.indexOf('\\n') === -1 && " +
+                "       !txt.match(/^(Tin nhắn|Messages|Tất cả|chuỗi|Hôm nay|Yesterday)$/i)) {" +
+                "       if (names.indexOf(txt) === -1 && names.length < 25) names.push(txt);" +
+                "   }" +
                 "}" +
                 "AndroidBridge.onContactsScanned(JSON.stringify(names));" +
                 "})();";
@@ -322,10 +317,7 @@ public class MainActivity extends Activity {
                         Set<String> selected = new HashSet<>(prefs.getStringSet(KEY_SELECTED, new HashSet<>()));
                         all.add(name);
                         selected.add(name);
-                        prefs.edit()
-                                .putStringSet(KEY_TARGETS, all)
-                                .putStringSet(KEY_SELECTED, selected)
-                                .apply();
+                        prefs.edit().putStringSet(KEY_TARGETS, all).putStringSet(KEY_SELECTED, selected).apply();
                         refreshTargetCheckboxes();
                         appendLog("Đã thêm & tích chọn: " + name);
                     }
@@ -345,9 +337,9 @@ public class MainActivity extends Activity {
         }
 
         String today = getTodayDateString();
+
         for (String target : allTargets) {
             boolean alreadySentToday = prefs.getBoolean("sent_" + today + "_" + target, false);
-
             CheckBox cb = new CheckBox(this);
             String status = alreadySentToday ? " [✅ Đã gửi hôm nay]" : " [⏳ Chưa gửi]";
             cb.setText("🔥 " + target + status);
@@ -355,13 +347,14 @@ public class MainActivity extends Activity {
             cb.setChecked(selectedTargets.contains(target));
 
             cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                Set<String> currentSelected =
-                        new HashSet<>(prefs.getStringSet(KEY_SELECTED, new HashSet<>()));
-                if (isChecked) currentSelected.add(target);
-                else currentSelected.remove(target);
+                Set<String> currentSelected = new HashSet<>(prefs.getStringSet(KEY_SELECTED, new HashSet<>()));
+                if (isChecked) {
+                    currentSelected.add(target);
+                } else {
+                    currentSelected.remove(target);
+                }
                 prefs.edit().putStringSet(KEY_SELECTED, currentSelected).apply();
             });
-
             checkboxContainer.addView(cb);
         }
     }
@@ -370,10 +363,11 @@ public class MainActivity extends Activity {
         String msg = msgInput.getText().toString().trim();
         if (msg.isEmpty()) msg = "chuỗi";
 
-        int hour = 7, min = 30;
+        int hour = 7;
+        int min = 30;
         try {
             hour = Integer.parseInt(hourInput.getText().toString().trim());
-            min  = Integer.parseInt(minInput.getText().toString().trim());
+            min = Integer.parseInt(minInput.getText().toString().trim());
         } catch (NumberFormatException ignored) {}
 
         prefs.edit()
@@ -390,8 +384,7 @@ public class MainActivity extends Activity {
         }
 
         DailyAlarmReceiver.scheduleDailyAlarm(this, hour, min);
-        appendLog("Đã bật Dịch vụ chạy ngầm. Hẹn giờ gửi mỗi ngày lúc "
-                + hour + ":" + String.format(Locale.US, "%02d", min));
+        appendLog("Đã bật Dịch vụ chạy ngầm. Hẹn giờ gửi mỗi ngày lúc " + hour + ":" + String.format(Locale.US, "%02d", min));
         Toast.makeText(this, "Đã lưu & Kích hoạt chạy ngầm!", Toast.LENGTH_SHORT).show();
     }
 
@@ -408,8 +401,11 @@ public class MainActivity extends Activity {
 
         for (String target : selected) {
             boolean sent = prefs.getBoolean("sent_" + today + "_" + target, false);
-            if (!sent || forceIgnoreDate) pendingList.add(target);
-            else appendLog("Bỏ qua [" + target + "] vì hôm nay (" + today + ") đã gửi rồi.");
+            if (!sent || forceIgnoreDate) {
+                pendingList.add(target);
+            } else {
+                appendLog("Bỏ qua [" + target + "] vì hôm nay (" + today + ") đã gửi rồi.");
+            }
         }
 
         if (pendingList.isEmpty()) {
@@ -423,45 +419,41 @@ public class MainActivity extends Activity {
         for (int i = 0; i < pendingList.size(); i++) {
             final String targetName = pendingList.get(i);
             final int index = i;
-            mainHandler.postDelayed(
-                    () -> sendStreakToTargetViaJS(targetName, msg, today),
-                    7000L + (index * 6000L));
+            mainHandler.postDelayed(() -> sendStreakToTargetViaJS(targetName, msg, today), 7000L + (index * 6000L));
         }
     }
 
     private void sendStreakToTargetViaJS(String targetName, String message, String today) {
         appendLog("Đang tìm cuộc trò chuyện: " + targetName + "...");
-
         String safeTarget = targetName.replace("'", "\\'");
-        String safeMsg    = message.replace("'", "\\'");
+        String safeMsg = message.replace("'", "\\'");
 
-        String jsAutoSend =
-                "(function() {" +
+        String jsAutoSend = "(function() {" +
                 "var elements = document.querySelectorAll('p, span, div');" +
                 "var foundChat = false;" +
                 "for (var i = 0; i < elements.length; i++) {" +
-                "  if (elements[i].innerText && elements[i].innerText.trim() === '" + safeTarget + "') {" +
-                "    elements[i].click();" +
-                "    foundChat = true;" +
-                "    break;" +
-                "  }" +
+                "   if (elements[i].innerText && elements[i].innerText.trim() === '" + safeTarget + "') {" +
+                "       elements[i].click();" +
+                "       foundChat = true;" +
+                "       break;" +
+                "   }" +
                 "}" +
                 "setTimeout(function() {" +
-                "  var editor = document.querySelector('[contenteditable=\"true\"], textarea, input[type=\"text\"]');" +
-                "  if (editor) {" +
-                "    editor.focus();" +
-                "    document.execCommand('insertText', false, '" + safeMsg + "');" +
-                "    editor.dispatchEvent(new Event('input', {bubbles: true}));" +
-                "    setTimeout(function() {" +
-                "      var sendBtn = document.querySelector('[data-e2e=\"message-send\"], button[type=\"submit\"]');" +
-                "      if (sendBtn) { sendBtn.click(); }" +
-                "      var enterEvt = new KeyboardEvent('keydown', {key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true});" +
-                "      editor.dispatchEvent(enterEvt);" +
-                "      AndroidBridge.onMessageSent('" + safeTarget + "', true);" +
-                "    }, 1000);" +
-                "  } else {" +
-                "    AndroidBridge.onMessageSent('" + safeTarget + "', foundChat);" +
-                "  }" +
+                "   var editor = document.querySelector('[contenteditable=\"true\"], textarea, input[type=\"text\"]');" +
+                "   if (editor) {" +
+                "       editor.focus();" +
+                "       document.execCommand('insertText', false, '" + safeMsg + "');" +
+                "       editor.dispatchEvent(new Event('input', {bubbles: true}));" +
+                "       setTimeout(function() {" +
+                "           var sendBtn = document.querySelector('[data-e2e=\"message-send\"], button[type=\"submit\"]');" +
+                "           if (sendBtn) { sendBtn.click(); }" +
+                "           var enterEvt = new KeyboardEvent('keydown', {key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true});" +
+                "           editor.dispatchEvent(enterEvt);" +
+                "           AndroidBridge.onMessageSent('" + safeTarget + "', true);" +
+                "       }, 1000);" +
+                "   } else {" +
+                "       AndroidBridge.onMessageSent('" + safeTarget + "', foundChat);" +
+                "   }" +
                 "}, 2000);" +
                 "})();";
 
@@ -472,7 +464,9 @@ public class MainActivity extends Activity {
         String today = getTodayDateString();
         Set<String> all = prefs.getStringSet(KEY_TARGETS, new HashSet<>());
         SharedPreferences.Editor editor = prefs.edit();
-        for (String target : all) editor.remove("sent_" + today + "_" + target);
+        for (String target : all) {
+            editor.remove("sent_" + today + "_" + target);
+        }
         editor.apply();
         refreshTargetCheckboxes();
         appendLog("Đã xóa lịch sử gửi ngày hôm nay (" + today + "). Có thể gửi lại.");
@@ -484,7 +478,9 @@ public class MainActivity extends Activity {
 
     private void appendLog(String text) {
         String time = new SimpleDateFormat("HH:mm:ss", Locale.US).format(new Date());
-        mainHandler.post(() -> logConsole.append("[" + time + "] " + text + "\n"));
+        mainHandler.post(() -> {
+            logConsole.append("[" + time + "] " + text + "\n");
+        });
     }
 
     private TextView createSectionHeader(String text) {
@@ -503,8 +499,7 @@ public class MainActivity extends Activity {
         btn.setBackgroundColor(Color.parseColor(bgHex));
         btn.setTextColor(Color.parseColor(textHex));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.setMargins(0, 8, 0, 8);
         btn.setLayoutParams(params);
         return btn;
@@ -520,7 +515,9 @@ public class MainActivity extends Activity {
                     int added = 0;
                     for (int i = 0; i < arr.length(); i++) {
                         String name = arr.getString(i).trim();
-                        if (!name.isEmpty() && all.add(name)) added++;
+                        if (!name.isEmpty() && all.add(name)) {
+                            added++;
+                        }
                     }
                     prefs.edit().putStringSet(KEY_TARGETS, all).apply();
                     refreshTargetCheckboxes();
@@ -537,8 +534,7 @@ public class MainActivity extends Activity {
                 String today = getTodayDateString();
                 prefs.edit().putBoolean("sent_" + today + "_" + targetName, true).apply();
                 refreshTargetCheckboxes();
-                appendLog("✅ Đã gửi chữ \"" + prefs.getString(KEY_MSG, "chuỗi")
-                        + "\" tới [" + targetName + "] (1/1 lần hôm nay).");
+                appendLog("✅ Đã gửi chữ \"" + prefs.getString(KEY_MSG, "chuỗi") + "\" tới [" + targetName + "] (1/1 lần hôm nay).");
             });
         }
     }
